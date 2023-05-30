@@ -1,0 +1,10 @@
+.custom-form {
+  .is-error {
+    input {
+      border-color: #fc6262 !important;
+    }
+    .el-form-item__error {
+      color: #fc6262;
+    }
+  }
+}
