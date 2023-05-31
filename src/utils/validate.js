@@ -57,7 +57,6 @@ export function validateSize(rule, value, callback, isCallback = true) {
 }
 
 export function validateConfirmed(rule, value, callback, isCallback = true) {
-    console.log(rule.condition.confirmed);
   if (value && rule.condition && value !== rule.condition.confirmed) {
     callback(new Error("Phải nhập trùng với mật khẩu!"));
   }

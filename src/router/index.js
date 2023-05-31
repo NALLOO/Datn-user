@@ -18,8 +18,12 @@ const routes = [
         path: '/register',
         name: 'Register',
         component: ()=> import("@/views/Register")
+    },
+    {
+        path: '/reset-password/:token',
+        name: 'ResetPassword',
+        component: ()=> import("@/views/ResetPassword")
     }
-
 
 ]
 

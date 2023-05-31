@@ -5,31 +5,77 @@
       <div class="register-content">
         <div class="register-title">Đăng ký</div>
         <div class="custom-form">
-          <el-form :model="registerForm" :rules="registerRules">
+          <el-form
+            :model="registerForm"
+            ref="registerForm"
+            :rules="registerRules"
+          >
             <el-form-item prop="email" label="Email" :error="errors.email">
               <el-input v-model="registerForm.email" type="text"></el-input>
             </el-form-item>
             <el-form-item prop="name" label="Tên">
-              <el-input v-model="registerForm.name" type="text" :error="errors.name"></el-input>
+              <el-input
+                v-model="registerForm.name"
+                type="text"
+                :error="errors.name"
+              ></el-input>
             </el-form-item>
             <el-form-item prop="phone" label="Số điện thoại">
-              <el-input v-model="registerForm.phone" type="text" :error="errors.phone"></el-input>
+              <el-input
+                v-model="registerForm.phone"
+                type="text"
+                :error="errors.phone"
+              ></el-input>
             </el-form-item>
-            <el-form-item prop="password" label="Mật khẩu" :error="errors.password">
+            <el-form-item
+              prop="password"
+              label="Mật khẩu"
+              :error="errors.password"
+            >
               <el-input
                 v-model="registerForm.password"
                 @blur="handleChangePassword"
-                type="password"
+                :type="passwordType"
               ></el-input>
+              <div class="show-pwd" @click="showPwd('passwordType')">
+                <Icon
+                  width="20"
+                  :icon="
+                    passwordType === 'password'
+                      ? 'lucide:eye-off'
+                      : 'lucide:eye'
+                  "
+                />
+              </div>
             </el-form-item>
-            <el-form-item prop="confirmPassword" label="Nhập lại mật khẩu " :error="errors.confirmPassword">
+            <el-form-item
+              prop="confirmPassword"
+              label="Nhập lại mật khẩu "
+              :error="errors.confirmPassword"
+            >
               <el-input
                 v-model="registerForm.confirmPassword"
-                type="password"
+                :type="confirmPasswordType"
               ></el-input>
+              <div class="show-pwd" @click="showPwd('confirmPasswordType')">
+                <Icon
+                  width="20"
+                  :icon="
+                    confirmPasswordType === 'password'
+                      ? 'lucide:eye-off'
+                      : 'lucide:eye'
+                  "
+                />
+              </div>
             </el-form-item>
             <div class="form-footer">
-              <el-button class="register-btn" round>Đăng ký</el-button>
+              <el-button
+                @click="handleSubmit"
+                :loading="loading"
+                class="register-btn"
+                round
+                >Đăng ký</el-button
+              >
               <span>Quên mật khẩu?</span>
             </div>
             <div class="register">
@@ -45,10 +91,22 @@
 </template>
 
 <script>
-import {validateEmail, validateRequired, validateConfirmed, validatePhoneNumber, validateSize} from "@/utils/validate"
+import {
+  validateEmail,
+  validateRequired,
+  validateConfirmed,
+  validatePhoneNumber,
+  validateSize,
+} from "@/utils/validate";
+import { register } from "@/api/auth";
+import { Icon } from "@iconify/vue2";
+import constant from "@/utils/constant"
 
 export default {
   name: "RegisterPage",
+  components: {
+    Icon
+  },
   data() {
     const validateEmailInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, false);
@@ -63,7 +121,7 @@ export default {
     };
     const validateConfirmPasswordInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, false);
-      validateConfirmed(rule, value, callback, true)
+      validateConfirmed(rule, value, callback, true);
     };
     const validatePhoneInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, false);
@@ -77,6 +135,9 @@ export default {
         password: null,
         confirmPassword: null,
       },
+      passwordType: "password",
+      confirmPasswordType: "password",
+      loading: false,
       errors: {},
       registerRules: {
         email: [
@@ -90,7 +151,7 @@ export default {
           {
             attr: "Tên",
             trigger: ["blur", "change"],
-            condition: {max : 255},
+            condition: { max: 255 },
             validator: validateNameInput,
           },
         ],
@@ -112,7 +173,7 @@ export default {
           {
             attr: "Mật khẩu xác nhận",
             trigger: ["blur", "change"],
-            condition: {confirmed: null},
+            condition: { confirmed: null },
             validator: validateConfirmPasswordInput,
           },
         ],
@@ -120,10 +181,33 @@ export default {
     };
   },
   methods: {
-    handleChangePassword(){
-      this.registerRules.confirmPassword[0].condition.confirmed = this.registerForm.password
-    }
-  }
+    showPwd(field) {
+      this[field] = this[field] === "password" ? "text" : "password";
+    },
+    handleChangePassword() {
+      this.registerRules.confirmPassword[0].condition.confirmed =
+        this.registerForm.password;
+    },
+    handleSubmit() {
+      this.$refs.registerForm.validate((valid) => {
+        if (valid) {
+          this.loading = true;
+          const data = { ...this.registerForm, role: constant.ROLE_USER };
+          delete data.confirmPassword;
+          register(data)
+            .then(() => {
+              this.$router.push({ name: "Login" });
+            })
+            .catch((err) => {
+              this.errors = err.error
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
+      });
+    },
+  },
 };
 </script>
 
@@ -175,6 +259,12 @@ export default {
               border-color: #2ec8a7;
             }
           }
+        }
+        .show-pwd {
+          cursor: pointer;
+          position: absolute;
+          right: 10px;
+          top: 45px;
         }
       }
       .form-footer {

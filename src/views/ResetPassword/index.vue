@@ -1,22 +1,23 @@
 <template>
-  <div class="login-container">
+  <div class="reset-container">
     <div></div>
     <div style="display: flex">
-      <div class="login-content">
-        <div class="login-title">Đăng nhập</div>
+      <div class="reset-content">
+        <div class="reset-title">Đặt lại mật khẩu</div>
         <div class="custom-form">
-          <el-form ref="loginForm" :model="loginForm" :rules="loginRule">
-            <el-form-item prop="email" label="Email" :error="errors.email">
-              <el-input v-model="loginForm.email" type="text"></el-input>
-            </el-form-item>
+          <el-form :model="resetForm" ref="resetForm" :rules="resetRule">
             <el-form-item
               prop="password"
-              label="Mật khẩu"
+              label="Mật khẩu mới"
               :error="errors.password"
             >
-              <el-input v-model="loginForm.password" :type="passwordType">
+              <el-input
+                v-model="resetForm.password"
+                @blur="handleChangePassword"
+                :type="passwordType"
+              >
               </el-input>
-              <div class="show-pwd" @click="showPwd">
+              <div class="show-pwd" @click="showPwd('passwordType')">
                 <Icon
                   width="20"
                   :icon="
@@ -27,19 +28,37 @@
                 />
               </div>
             </el-form-item>
+
+            <el-form-item
+              prop="confirmPassword"
+              label="Nhập lại mật khẩu"
+              :error="errors.confirmPassword"
+            >
+              <el-input
+                v-model="resetForm.confirmPassword"
+                :type="confirmPasswordType"
+              >
+              </el-input>
+              <div class="show-pwd" @click="showPwd('confirmPasswordType')">
+                <Icon
+                  width="20"
+                  :icon="
+                    confirmPasswordType === 'password'
+                      ? 'lucide:eye-off'
+                      : 'lucide:eye'
+                  "
+                />
+              </div>
+            </el-form-item>
             <div class="form-footer">
               <el-button
                 :loading="loading"
-                class="login-btn"
                 @click="handleSubmit"
+                class="reset-btn"
                 round
-                >Đăng nhập</el-button
+                >Xác nhận</el-button
               >
-              <span>Quên mật khẩu?</span>
-            </div>
-            <div class="register">
-              Chưa có tài khoản?
-              <span @click="$router.push({ name: 'Register' })">Đăng ký</span>
+              <span @click="$router.push({ name: 'Login' })">Đăng nhập</span>
             </div>
           </el-form>
         </div>
@@ -49,36 +68,38 @@
 </template>
 
 <script>
-import { validateRequired, validateEmail } from "@/utils/validate";
+import { validateRequired, validateConfirmed } from "@/utils/validate";
+import { checkToken, resetPassword } from "@/api/auth";
 import { Icon } from "@iconify/vue2";
-import { login } from "@/api/auth";
 
 export default {
-  name: "LoginPage",
+  name: "ResetPage",
   components: {
     Icon,
   },
   data() {
-    const validateEmailInput = (rule, value, callback) => {
+    const validateConfirmPasswordInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, false);
-      validateEmail(rule, value, callback, true);
+      validateConfirmed(rule, value, callback, true);
     };
     const validatePasswordInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, true);
     };
     return {
-      loginForm: {
-        email: null,
+      resetForm: {
+        confirmPassword: null,
         password: null,
       },
       loading: false,
       passwordType: "password",
-      loginRule: {
-        email: [
+      confirmPasswordType: "password",
+      resetRule: {
+        confirmPassword: [
           {
-            attr: "Email",
+            attr: "Mật khẩu xác nhận ",
             trigger: ["change", "blur"],
-            validator: validateEmailInput,
+            condition: { confirmed: null },
+            validator: validateConfirmPasswordInput,
           },
         ],
         password: [
@@ -92,22 +113,39 @@ export default {
       errors: {},
     };
   },
+  created() {
+    this.checkToken();
+  },
   methods: {
-    showPwd() {
-      this.passwordType =
-        this.passwordType === "password" ? "text" : "password";
+    showPwd(field) {
+      this[field] = this[field] === "password" ? "text" : "password";
+    },
+    handleChangePassword() {
+      this.resetRule.confirmPassword[0].condition.confirmed =
+        this.resetForm.password;
+    },
+    checkToken() {
+      const token = this.$route.params.token;
+      checkToken({ token })
+        .then(() => {})
+        .catch((err) => {
+          console.log(err);
+        });
     },
     handleSubmit() {
-      this.errors = {}
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.resetForm.validate((valid) => {
         if (valid) {
           this.loading = true;
-          login(this.loginForm)
-            .then((res) => {
-              localStorage.setItem('access_token', res.access_token)
+          const data = {
+            token: this.$route.params.token,
+            password: this.resetForm.password,
+          };
+          resetPassword(data)
+            .then(() => {
+              this.$router.push({ name: "Login" });
             })
             .catch((err) => {
-              this.errors = err.error
+              console.log(err);
             })
             .finally(() => {
               this.loading = false;
@@ -118,9 +156,8 @@ export default {
   },
 };
 </script>
-
 <style lang="scss">
-.login-container {
+.reset-container {
   width: 100%;
   color: white;
   height: 100vh;
@@ -129,7 +166,7 @@ export default {
   background-image: url("../../assets/img/bus-bg.png");
   background-repeat: no-repeat;
   background-size: cover;
-  .login-content {
+  .reset-content {
     max-width: 500px;
     margin: auto;
     border: none;
@@ -137,7 +174,7 @@ export default {
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     padding: 20px;
-    .login-title {
+    .reset-title {
       font-size: 20px;
       font-weight: 600;
       margin-bottom: 15px;
@@ -173,7 +210,7 @@ export default {
         align-items: center;
         justify-content: space-evenly;
         margin-bottom: 20px;
-        .login-btn {
+        .reset-btn {
           background: #2ec8a7;
           color: #606266;
           border: none;
