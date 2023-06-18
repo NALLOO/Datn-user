@@ -58,6 +58,10 @@ export default {
   components: {
     Icon,
   },
+  created() {
+    if (this.$store.state.user && this.$store.state.token)
+      this.$router.push({ name: "HomePage" });
+  },
   data() {
     const validateEmailInput = (rule, value, callback) => {
       validateRequired(rule, value, callback, false);
@@ -98,16 +102,19 @@ export default {
         this.passwordType === "password" ? "text" : "password";
     },
     handleSubmit() {
-      this.errors = {}
+      this.errors = {};
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
           login(this.loginForm)
             .then((res) => {
-              localStorage.setItem('access_token', res.access_token)
+              localStorage.setItem("access_token", res.access_token);
+              this.$store.dispatch("SET_USER", res.user);
+              this.$store.dispatch("SET_TOKEN", res.access_token);
+              this.$router.push({ name: "HomePage" });
             })
             .catch((err) => {
-              this.errors = err.error
+              this.errors = err.error;
             })
             .finally(() => {
               this.loading = false;

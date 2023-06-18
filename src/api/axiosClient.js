@@ -6,23 +6,24 @@ const client = axios.create({
 });
 
 client.interceptors.request.use((config) => {
-  config.headers["Authorization"] = localStorage.getItem("access_token");
+  config.headers["Authorization"] =
+    "Bearer " + localStorage.getItem("access_token");
   return config;
 });
 
-client.interceptors.response.use((response) => {
-  if(response.data) {
-    return response.data
-  }
-},
-  error => {
-    if(error.response && error.response.data) {
-      return Promise.reject(error.response.data)
+client.interceptors.response.use(
+  (response) => {
+    if (response.data) {
+      return response.data;
     }
-    else {
-      return Promise.reject()
+  },
+  (error) => {
+    if (error.response && error.response.data) {
+      return Promise.reject(error.response.data);
+    } else {
+      return Promise.reject();
     }
   }
-)
+);
 
 export default client;

@@ -4,7 +4,18 @@
       <div class="navbar-content">
         <div class="logo"><img src="../assets/img/bus.jpg" alt="" /></div>
         <div class="dropdown">
-            <div @click="$router.push({name: 'Login'})">Đăng nhập</div>
+          <div v-if="!user" @click="$router.push({ name: 'Login' })">
+            Đăng nhập
+          </div>
+          <el-dropdown @command="handleCommand" v-else>
+            <span class="el-dropdown-link">
+              {{ user.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="profile"> Hồ sơ </el-dropdown-item>
+              <el-dropdown-item command="logout">Đăng xuất </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
     </div>
@@ -16,6 +27,33 @@
 <script>
 export default {
   name: "AppLayout",
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
+  methods: {
+    handleLogout() {
+      this.$store.dispatch("REMOVE_USER");
+      this.$store.dispatch("REMOVE_TOKEN");
+      localStorage.removeItem("access_token");
+    },
+    onGotoProfile() {
+      this.$router.push({ name: "Profile" });
+    },
+    handleCommand(command) {
+      switch (command) {
+        case "profile":
+          this.onGotoProfile();
+          break;
+        case "logout":
+          this.handleLogout();
+          break;
+        default:
+          break;
+      }
+    },
+  },
 };
 </script>
 
@@ -43,10 +81,10 @@ export default {
         height: 70px;
       }
     }
-    .dropdown{
-        display: flex;
-        align-items: center;
-        cursor: pointer;
+    .dropdown {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
     }
   }
 }
