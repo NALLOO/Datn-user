@@ -225,9 +225,6 @@ export default {
     height: 100%;
     transform: scaleX(-1);
   }
-  // background-image: url("../../assets/img/bus-bg.png");
-  // background-repeat: no-repeat;
-  // background-size: cover;
   .register-content {
     max-width: 500px;
     margin: auto;

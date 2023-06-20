@@ -2,7 +2,10 @@
   <div class="app-layout">
     <div class="navbar">
       <div class="navbar-content">
-        <div class="logo"><img src="../assets/img/bus.jpg" alt="" /></div>
+        <div class="logo">
+          <span>NALLOO BUS</span>
+          <!-- <img src="../assets/img/bus.jpg" alt="" /> -->
+        </div>
         <div class="dropdown">
           <div v-if="!user" @click="$router.push({ name: 'Login' })">
             Đăng nhập
@@ -64,27 +67,42 @@ export default {
   .navbar {
     position: fixed;
     padding: 0 20px;
+    background: rgb(2, 0, 36);
+    background: linear-gradient(
+      90deg,
+      rgba(2, 0, 36, 1) 0%,
+      rgba(9, 9, 121, 1) 23%,
+      rgba(0, 212, 255, 1) 100%
+    );
     top: 0;
     width: 100%;
     margin: 0 auto;
     width: 100%;
-    background: white;
+    height: 64px;
     box-shadow: 0 0 5px gray;
     &-content {
       display: flex;
+      align-items: center;
       justify-content: space-between;
       max-width: 1400px;
+      height: 100%;
       margin: 0 auto;
     }
     .logo {
       img {
         height: 70px;
       }
+      span {
+        font-weight: 700;
+        font-size: 20px;
+        color: rgba(0, 212, 255, 1) ;
+      }
     }
     .dropdown {
       display: flex;
       align-items: center;
       cursor: pointer;
+      font-weight: 600;
     }
   }
 }

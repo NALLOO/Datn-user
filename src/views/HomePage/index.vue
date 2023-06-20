@@ -2,6 +2,7 @@
   <AppLayout>
     <div class="home-container">
       <div class="search-form">
+        <h2 style="text-align: left; margin: 20px">Tìm kiếm chuyến xe</h2>
         <el-form :model="searchForm" class="search-form-content">
           <el-form-item label="Điểm đi">
             <el-select
@@ -171,7 +172,7 @@ export default {
       this.searchForm.startProvinceId = this.$route.query.startProvinceId;
       this.searchForm.endProvinceId = this.$route.query.endProvinceId;
       this.searchForm.date = this.$route.query.date;
-      this.searchForm.orderBy = this.$route.query.orderBy;
+      this.searchForm.orderBy = this.$route.query.orderBy || 'asc';
       this.pagination.page = this.$route.query.page;
     },
     onSearch() {
@@ -215,12 +216,20 @@ export default {
 .home-container {
   padding: 20px;
   .search-form {
+    margin-bottom: 30px;
+    .el-form-item{
+      margin: 0;
+    }
     &-content {
       margin: 0 auto;
       max-width: 1400px;
       display: flex;
-      gap: 30px;
+      justify-content: space-evenly;
       flex-wrap: wrap;
+    }
+    .submit-search{
+      display: flex;
+      align-items: flex-end;
     }
   }
 }
