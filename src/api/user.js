@@ -14,3 +14,10 @@ export function updateProfile(data) {
     data,
   });
 }
+
+export function getMyTicket() {
+  return request({
+    url: "ticket/mine",
+    method: "get",
+  });
+}

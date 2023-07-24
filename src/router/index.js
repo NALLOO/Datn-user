@@ -25,6 +25,16 @@ const routes = [
     component: () => import("@/views/Register"),
   },
   {
+    path: "/success",
+    name: "Success",
+    component: () => import("@/views/Success"),
+  },
+  {
+    path: "/failed",
+    name: "Failed",
+    component: () => import("@/views/Failed"),
+  },
+  {
     path: "/profile",
     name: "Profile",
     component: () => import("@/views/Profile"),
@@ -33,6 +43,11 @@ const routes = [
     path: "/reset-password/:token",
     name: "ResetPassword",
     component: () => import("@/views/ResetPassword"),
+  },
+  {
+    path: "/forgot-password",
+    name: "FogotPassword",
+    component: () => import("@/views/ForgotPassword"),
   },
 ];
 

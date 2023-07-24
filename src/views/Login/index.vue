@@ -6,13 +6,13 @@
         <div class="login-title">Đăng nhập</div>
         <div class="custom-form">
           <el-form ref="loginForm" :model="loginForm" :rules="loginRule">
-            <el-form-item prop="email" label="Email" :error="errors.email">
+            <el-form-item prop="email" label="Email" :error="errors?.email">
               <el-input v-model="loginForm.email" type="text"></el-input>
             </el-form-item>
             <el-form-item
               prop="password"
               label="Mật khẩu"
-              :error="errors.password"
+              :error="errors?.password"
             >
               <el-input v-model="loginForm.password" :type="passwordType">
               </el-input>
@@ -35,7 +35,9 @@
                 round
                 >Đăng nhập</el-button
               >
-              <span>Quên mật khẩu?</span>
+              <span @click="$router.push({ name: 'FogotPassword' })"
+                >Quên mật khẩu?</span
+              >
             </div>
             <div class="register">
               Chưa có tài khoản?
@@ -114,7 +116,7 @@ export default {
               this.$router.push({ name: "HomePage" });
             })
             .catch((err) => {
-              this.errors = err.error;
+              this.errors = err.errors;
             })
             .finally(() => {
               this.loading = false;

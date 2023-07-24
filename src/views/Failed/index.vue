@@ -5,13 +5,15 @@
         <i type="primary" class="el-icon-warning-outline icon"></i>
       </div>
       <div class="header-card">
-        <h2>{{ $t("TEXT0313") }}</h2>
-        <p style="color: #b2b2b2">{{ $t("TEXT0315") }}</p>
+        <h2>Thanh toán thất bại</h2>
+        <p style="color: #b2b2b2">
+          Có lỗi xảy ra trong quá trình thanh toán, bạn hãy thử lại sau
+        </p>
       </div>
       <div class="">
-        <el-button class="btn" type="primary" @click="gotoHome" round>{{
-          $t("TEXT0311")
-        }}</el-button>
+        <el-button class="btn" type="primary" @click="gotoHome" round>
+          Về trang chủ
+        </el-button>
       </div>
     </div>
   </div>
@@ -21,10 +23,10 @@
 export default {
   name: "FailedPage",
   methods: {
-    gotoHome(){
-      this.$router.push({name: "HomePage"})
-    }
-  } 
+    gotoHome() {
+      this.$router.push({ name: "HomePage" });
+    },
+  },
 };
 </script>
 

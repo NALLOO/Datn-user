@@ -3,7 +3,9 @@
     <div class="navbar">
       <div class="navbar-content">
         <div class="logo">
-          <span>NALLOO BUS</span>
+          <router-link to="/">
+            <span>NALLOO BUS</span>
+          </router-link>
           <!-- <img src="../assets/img/bus.jpg" alt="" /> -->
         </div>
         <div class="dropdown">
@@ -65,6 +67,7 @@ export default {
   min-height: 100vh;
   padding-top: 74px;
   .navbar {
+    z-index: 10;
     position: fixed;
     padding: 0 20px;
     background: rgb(2, 0, 36);
@@ -95,7 +98,7 @@ export default {
       span {
         font-weight: 700;
         font-size: 20px;
-        color: rgba(0, 212, 255, 1) ;
+        color: rgba(0, 212, 255, 1);
       }
     }
     .dropdown {
