@@ -53,7 +53,7 @@
             <el-table
               ref="list-ticket"
               :data="listTicket"
-              max-height="500px"
+              max-height="600px"
               @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="55"> </el-table-column>
@@ -164,6 +164,7 @@ export default {
     },
     getDetailTrip() {
       const id = this.$route.params.id;
+      this.loading = true;
       getDetailTripApi(id)
         .then((res) => {
           this.trip = res.data;
@@ -179,6 +180,9 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
   },
@@ -195,6 +199,13 @@ export default {
     margin: 30px auto;
     flex-wrap: wrap;
     gap: 50px;
+    .el-row {
+      margin-bottom: 5px;
+      text-align: start;
+      ul {
+        padding: 0;
+      }
+    }
     .trip-info {
       .seat {
         margin-top: 30px;

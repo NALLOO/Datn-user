@@ -1,6 +1,6 @@
 <template>
   <AppLayout>
-    <div class="home-container">
+    <div v-loading="loading.app || loading.search" class="home-container">
       <div class="search-form">
         <h2 style="text-align: left; margin: 20px">Tìm kiếm chuyến xe</h2>
         <el-form :model="searchForm" class="search-form-content">
@@ -96,7 +96,11 @@
             </template>
           </el-table-column>
           <el-table-column label="Giá vé" prop="price"> </el-table-column>
-          <el-table-column label="Số vé trống"> </el-table-column>
+          <el-table-column label="Số vé trống">
+            <template slot-scope="{ row }">
+              {{ row.tickets.length }}
+            </template>
+          </el-table-column>
           <el-table-column label="Giờ khởi hành">
             <template slot-scope="{ row }">
               {{ moment(row.timeStart).format("YYYY-MM-DD HH:mm ") }}
@@ -172,7 +176,7 @@ export default {
       this.searchForm.startProvinceId = this.$route.query.startProvinceId;
       this.searchForm.endProvinceId = this.$route.query.endProvinceId;
       this.searchForm.date = this.$route.query.date;
-      this.searchForm.orderBy = this.$route.query.orderBy || 'asc';
+      this.searchForm.orderBy = this.$route.query.orderBy || "asc";
       this.pagination.page = this.$route.query.page;
     },
     onSearch() {
@@ -190,15 +194,20 @@ export default {
         });
     },
     getListProvince() {
+      this.loading.app = true;
       getProvinceApi()
         .then((res) => {
           this.provinceList = res.data;
         })
         .catch((err) => {
           console.log(err);
+        })
+        .then(() => {
+          this.loading.app = false;
         });
     },
     getListTrip() {
+      this.loading.search = true;
       getTripApi({ ...this.searchForm, page: this.pagination.page })
         .then((res) => {
           this.tripList = res.data.data;
@@ -206,6 +215,9 @@ export default {
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          this.loading.search = false;
         });
     },
   },
@@ -217,7 +229,7 @@ export default {
   padding: 20px;
   .search-form {
     margin-bottom: 30px;
-    .el-form-item{
+    .el-form-item {
       margin: 0;
     }
     &-content {
@@ -227,7 +239,7 @@ export default {
       justify-content: space-evenly;
       flex-wrap: wrap;
     }
-    .submit-search{
+    .submit-search {
       display: flex;
       align-items: flex-end;
     }
